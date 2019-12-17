@@ -42,7 +42,7 @@ defmodule ExBanking do
   @spec deposit(user :: String.t(), amount :: number, currency :: String.t()) ::
           {:ok, new_balance :: number} | banking_error
   def deposit(user, amount, currency) do
-    if !is_binary(user) || !is_number(amount) || !is_binary(currency) do
+    if !is_binary(user) || !is_number(amount) || amount < 0 || !is_binary(currency) do
       {:error, :wrong_arguments}
     else
       case Registry.get(:banking_registry, user) do
@@ -71,7 +71,7 @@ defmodule ExBanking do
   @spec withdraw(user :: String.t(), amount :: number, currency :: String.t()) ::
           {:ok, new_balance :: number} | banking_error
   def withdraw(user, amount, currency) do
-    if !is_binary(user) || !is_number(amount) || !is_binary(currency) do
+    if !is_binary(user) || !is_number(amount) || amount < 0 || !is_binary(currency) do
       {:error, :wrong_arguments}
     else
       case Registry.get(:banking_registry, user) do
@@ -121,7 +121,8 @@ defmodule ExBanking do
           currency :: String.t()
         ) :: {:ok, from_user_balance :: number, to_user_balance :: number} | banking_error
   def send(from_user, to_user, amount, currency) do
-    if !is_binary(from_user) || !is_binary(to_user) || !is_number(amount) || !is_binary(currency) do
+    if !is_binary(from_user) || !is_binary(to_user) || !is_number(amount) || amount < 0 ||
+         !is_binary(currency) do
       {:error, :wrong_arguments}
     else
       case withdraw(from_user, amount, currency) do
